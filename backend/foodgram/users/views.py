@@ -1,3 +1,9 @@
-from django.shortcuts import render
+# users/views.py
 
-# Create your views here.
+from djoser.views import UserViewSet
+
+from users.serializers import CustomUserSerializer
+
+
+class CustomUserViewSet(UserViewSet):
+    serializer_class = CustomUserSerializer
