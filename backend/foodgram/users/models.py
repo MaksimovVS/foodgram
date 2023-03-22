@@ -6,7 +6,6 @@ from django.utils.translation import gettext_lazy as _
 
 
 class User(AbstractUser):
-    # is_subscribed
     email = models.EmailField(
         _('email address'),
         max_length=254,
@@ -22,3 +21,4 @@ class User(AbstractUser):
         _('Фамилия'),
         max_length=150,
     )
+    is_subscribed = models.BooleanField(default=False)

@@ -9,12 +9,13 @@ User = get_user_model()
 class Tag(models):
     name = models.CharField(
         'Название тега',
-        max_length=128,
+        max_length=200,
     )
     color = models.CharField(max_length=7)
-    slug = models.CharField(
+    slug = models.SlugField(
         'slug Тега',
-        max_length=32,
+        max_length=200,
+        unique=True,
     )
 
     class Meta:
@@ -27,12 +28,12 @@ class Tag(models):
 class Ingredients(models):
     name = models.CharField(
         'Название ингридиента',
-        max_length=128,
+        max_length=200,
     )
     quantity = models.IntegerField()
-    unit = models.CharField(
+    measurement_unit = models.CharField(
         'Единица измерения',
-        max_length=10,
+        max_length=200,
     )
 
     class Meta:
@@ -67,6 +68,8 @@ class Recipe(models):
         Ingredients,
         through='IngredientsRecipe'
     )
+    is_favorited = models.BooleanField(default=False)
+    is_in_shopping_cart = models.BooleanField(default=False)
 
     class Meta:
         pass
