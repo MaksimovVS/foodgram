@@ -1,4 +1,5 @@
-from datetime import timedelta
+import os
+
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -137,3 +138,6 @@ DJOSER = {
         'current_user': 'users.serializers.CustomUserSerializer',
     },
 }
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
