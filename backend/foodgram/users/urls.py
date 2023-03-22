@@ -1,8 +1,9 @@
 # users/urls.py
 
 from django.urls import include, path
+from rest_framework.authtoken import views
 
 urlpatterns = [
     path('', include('djoser.urls')),
-    path('', include('djoser.urls.jwt')),
+    path('auth/', include('djoser.urls.authtoken')),
 ]

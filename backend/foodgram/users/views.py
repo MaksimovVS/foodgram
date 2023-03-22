@@ -2,8 +2,8 @@
 
 from djoser.views import UserViewSet
 
-from users.serializers import CustomUserSerializer
+from users.serializers import CustomCreateUserSerializer
 
 
 class CustomUserViewSet(UserViewSet):
-    serializer_class = CustomUserSerializer
+    serializer_class = CustomCreateUserSerializer
