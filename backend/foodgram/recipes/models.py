@@ -6,7 +6,7 @@ from django.db import models
 User = get_user_model()
 
 
-class Tag(models):
+class Tag(models.Model):
     name = models.CharField(
         'Название тега',
         max_length=200,
@@ -25,7 +25,7 @@ class Tag(models):
         return self.name
 
 
-class Ingredients(models):
+class Ingredients(models.Model):
     name = models.CharField(
         'Название ингридиента',
         max_length=200,
@@ -43,7 +43,7 @@ class Ingredients(models):
         return self.name
 
 
-class Recipe(models):
+class Recipe(models.Model):
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
