@@ -5,7 +5,6 @@ pytz==2022.7.1
 sqlparse==0.4.3
 tzdata==2022.7
 djoser==2.1.0
-djangorestframework-simplejwt==4.7.2
 flake8
 pep8-naming
 flake8-broken-line
