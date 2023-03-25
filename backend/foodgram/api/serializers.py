@@ -2,7 +2,7 @@
 
 from rest_framework import serializers
 
-from recipes.models import Ingredient, Recipe, Tag
+from recipes.models import Ingredient, Recipe, Tag, IngredientRecipe
 from users.serializers import CustomUserSerializer
 
 
@@ -19,35 +19,23 @@ class IngredientSerializer(serializers.ModelSerializer):
         model = Ingredient
         fields = '__all__'
 
-    def to_representation(self, instance):
-        """Convert `username` to lowercase."""
-        a = instance
-        print(a)
-        # ret = super().to_representation(instance)
-        # ret['username'] = ret['username'].lower()
-        return None
+
+class IngredientAmountSerializer(serializers.ModelSerializer):
+    name = serializers.ReadOnlyField(source='ingredient.name')
+    measurement_unit = serializers.ReadOnlyField(
+        source='ingredient.measurement_unit'
+    )
+
+    class Meta:
+        model = IngredientRecipe
+        fields = ('id', 'name', 'measurement_unit', 'amount')
 
 
 class RecipeSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True, read_only=True)
     author = CustomUserSerializer(read_only=True)
-    ingredients = IngredientSerializer(many=True, read_only=True)
+    ingredients = IngredientAmountSerializer(many=True, read_only=True, source='ingredient_in_recipe')
 
     class Meta:
         model = Recipe
-        # fields = '__all__'
         fields = ('id', 'tags', 'author', 'ingredients', 'name', 'image', 'text', 'cooking_time')
-
-    # def to_representation(self, instance):
-    #     data = super(IngredientSerializer, self).to_representation(instance)
-    #     # data['amount'] = instance.job_result.user.username
-    #     a = instance
-    #     print(a)
-    #     return data
-    # def to_representation(self, instance):
-    #     """Convert `username` to lowercase."""
-    #     a = instance
-    #     print(a)
-    #     # ret = super().to_representation(instance)
-    #     # ret['username'] = ret['username'].lower()
-    #     return None
