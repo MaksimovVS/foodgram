@@ -25,7 +25,7 @@ class Tag(models.Model):
         return self.name
 
 
-class Ingredients(models.Model):
+class Ingredient(models.Model):
     name = models.CharField(
         'Название ингридиента',
         max_length=200,
@@ -65,8 +65,8 @@ class Recipe(models.Model):
     cooking_time = models.PositiveIntegerField()
     tags = models.ManyToManyField(Tag, through='TagRecipe')
     ingredients = models.ManyToManyField(
-        Ingredients,
-        through='IngredientsRecipe'
+        Ingredient,
+        through='IngredientRecipe'
     )
     is_favorited = models.BooleanField(default=False)
     is_in_shopping_cart = models.BooleanField(default=False)
@@ -86,10 +86,10 @@ class TagRecipe(models.Model):
         return f'{self.tag} {self.recipe}'
 
 
-class IngredientsRecipe(models.Model):
-    ingredients = models.ForeignKey(Ingredients, on_delete=models.CASCADE)
+class IngredientRecipe(models.Model):
+    ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=6, decimal_places=2)
 
     def __str__(self):
-        return f'{self.ingredients} {self.recipe}'
+        return f'{self.ingredient} {self.recipe}'
