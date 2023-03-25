@@ -99,4 +99,3 @@ class Favorite(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
     is_favorited = models.BooleanField()
     is_in_shopping_cart = models.BooleanField()
-
