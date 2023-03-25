@@ -88,7 +88,6 @@ class TagRecipe(models.Model):
 class IngredientRecipe(models.Model):
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='ingredient_in_recipe',)
-    # amount = models.DecimalField(max_digits=6, decimal_places=2)
     amount = models.PositiveSmallIntegerField('Количество')
 
     def __str__(self):
@@ -96,5 +95,10 @@ class IngredientRecipe(models.Model):
 
 
 class Favorite(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
+
+
+class ShoppingCart(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)

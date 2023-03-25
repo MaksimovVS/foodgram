@@ -2,7 +2,7 @@
 
 from rest_framework import serializers
 
-from recipes.models import Ingredient, Recipe, Tag, IngredientRecipe
+from recipes.models import Ingredient, Recipe, Tag, IngredientRecipe, Favorite, ShoppingCart
 from users.serializers import CustomUserSerializer
 
 
@@ -31,11 +31,29 @@ class IngredientAmountSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'measurement_unit', 'amount')
 
 
+class FavoriteSerializer(serializers.ModelSerializer):
+    pass
+
+
 class RecipeSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True, read_only=True)
     author = CustomUserSerializer(read_only=True)
     ingredients = IngredientAmountSerializer(many=True, read_only=True, source='ingredient_in_recipe')
+    is_favorited = serializers.SerializerMethodField()
+    is_in_shopping_cart = serializers.SerializerMethodField()
 
     class Meta:
         model = Recipe
-        fields = ('id', 'tags', 'author', 'ingredients', 'name', 'image', 'text', 'cooking_time')
+        fields = ('id', 'tags', 'author', 'ingredients', 'is_favorited', 'is_in_shopping_cart', 'name', 'image', 'text', 'cooking_time')
+
+    def get_is_favorited(self, obj):
+        user = self.context.get('request').user
+        if user.is_authenticated:
+            return Favorite.objects.filter(recipe=obj, user=user).exists()
+        return False
+
+    def get_is_in_shopping_cart(self, obj):
+        user = self.context.get('request').user
+        if user.is_authenticated:
+            return ShoppingCart.objects.filter(recipe=obj, user=user).exists()
+        return False
