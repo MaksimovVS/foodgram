@@ -30,7 +30,6 @@ class Ingredient(models.Model):
         'Название ингридиента',
         max_length=200,
     )
-    # quantity = models.IntegerField() <- это должно быть не здесь!
     measurement_unit = models.CharField(
         'Единица измерения',
         max_length=200,
@@ -59,7 +58,7 @@ class Recipe(models.Model):
         upload_to='recipes/images/',
         blank=True,
     )
-    description = models.TextField(
+    text = models.TextField(
         'Описание рецепта',
     )
     cooking_time = models.PositiveIntegerField()
@@ -68,8 +67,8 @@ class Recipe(models.Model):
         Ingredient,
         through='IngredientRecipe'
     )
-    is_favorited = models.BooleanField(default=False)
-    is_in_shopping_cart = models.BooleanField(default=False)
+    # is_favorited = models.BooleanField(default=False)
+    # is_in_shopping_cart = models.BooleanField(default=False)
 
     class Meta:
         pass
