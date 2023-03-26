@@ -6,6 +6,13 @@ from recipes.models import Ingredient, Recipe, Tag, IngredientRecipe, Favorite
 from users.serializers import CustomUserSerializer
 
 
+class AddTagSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Tag
+        fields = ('id',)
+
+
 class TagSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -43,26 +50,31 @@ class RecipeSerializer(serializers.ModelSerializer):
         fields = ('id', 'tags', 'author', 'ingredients', 'is_favorited', 'is_in_shopping_cart', 'name', 'image', 'text', 'cooking_time')
 
     def get_is_favorited(self, obj):
-        user = self.context.get('request').user
-        if user.is_authenticated:
-            return Favorite.objects.filter(recipe=obj, user=user, is_favorited=True).exists()
-        return False
+        request = self.context.get('request')
+        if request is None or request.user.is_anonymous:
+            return False
+        return Favorite.objects.filter(recipe=obj, user=request.user,
+                                       is_favorited=True).exists()
 
     def get_is_in_shopping_cart(self, obj):
-        user = self.context.get('request').user
-        if user.is_authenticated:
-            return Favorite.objects.filter(recipe=obj, user=user,
-                                           is_in_shopping_cart=True).exists()
-        return False
+        request = self.context.get('request')
+        if request is None or request.user.is_anonymous:
+            return False
+        return Favorite.objects.filter(recipe=obj, user=request.user,
+                                       is_in_shopping_cart=True).exists()
 
 
 class ActionRecipeSerializer(serializers.ModelSerializer):
+    tags = serializers.PrimaryKeyRelatedField(
+        queryset=Tag.objects.all(),
+        many=True,
+    )
 
     class Meta:
         model = Recipe
         fields = (
             # 'ingredients',
-            # 'tags',
+            'tags',
             'image',
             'name',
             'text',
@@ -71,4 +83,14 @@ class ActionRecipeSerializer(serializers.ModelSerializer):
         )
         # read_only_fields = ('author',)
 
+    def to_representation(self, instance):
+        serializer = RecipeSerializer(instance)
+        return serializer.data
+
+    def create(self, validated_data):
+        tags = validated_data.pop('tags')
+        recipe = Recipe.objects.create(**validated_data)
+        recipe.tags.set(tags)
+        recipe.save()
+        return recipe
 
