@@ -38,8 +38,8 @@ class Ingredient(models.Model):
     class Meta:
         pass
 
-    def __str__(self):
-        return self.name
+    # def __str__(self):
+    #     return self.name
 
 
 class Recipe(models.Model):

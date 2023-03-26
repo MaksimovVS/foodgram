@@ -20,6 +20,19 @@ class TagSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class AddIngredientSerializer(serializers.ModelSerializer):
+    id = serializers.PrimaryKeyRelatedField(
+        queryset=Ingredient.objects.all(),
+        # many=True,
+    )
+    # id = serializers.IntegerField()
+    amount = serializers.IntegerField()
+
+    class Meta:
+        model = IngredientRecipe
+        fields = ('id', 'amount')
+
+
 class IngredientSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -69,19 +82,18 @@ class ActionRecipeSerializer(serializers.ModelSerializer):
         queryset=Tag.objects.all(),
         many=True,
     )
+    ingredients = AddIngredientSerializer(many=True)
 
     class Meta:
         model = Recipe
         fields = (
-            # 'ingredients',
+            'ingredients',
             'tags',
             'image',
             'name',
             'text',
             'cooking_time',
-            # 'author',
         )
-        # read_only_fields = ('author',)
 
     def to_representation(self, instance):
         serializer = RecipeSerializer(instance)
@@ -89,8 +101,21 @@ class ActionRecipeSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         tags = validated_data.pop('tags')
+        ingredients = validated_data.pop('ingredients')
+        # amount = validated_data.pop('amount')
         recipe = Recipe.objects.create(**validated_data)
         recipe.tags.set(tags)
         recipe.save()
+        for ingredient in ingredients:
+            print(ingredient.get('id'), ingredient.get('amount'))
+            current_ingredient, status = IngredientRecipe.objects.get_or_create(
+                recipe=recipe,
+                ingredient=ingredient.get('id'),
+                amount=ingredient.get('amount'),
+            )
+        # IngredientRecipe.objects.create(
+        #     # recipe=recipe, ingredient=current_ingredient, amount=amount
+        #     recipe=recipe, **current_ingredient
+        # )
         return recipe
 
