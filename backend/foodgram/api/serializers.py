@@ -23,9 +23,7 @@ class TagSerializer(serializers.ModelSerializer):
 class AddIngredientSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(
         queryset=Ingredient.objects.all(),
-        # many=True,
     )
-    # id = serializers.IntegerField()
     amount = serializers.IntegerField()
 
     class Meta:
@@ -102,20 +100,32 @@ class ActionRecipeSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         tags = validated_data.pop('tags')
         ingredients = validated_data.pop('ingredients')
-        # amount = validated_data.pop('amount')
         recipe = Recipe.objects.create(**validated_data)
         recipe.tags.set(tags)
         recipe.save()
         for ingredient in ingredients:
-            print(ingredient.get('id'), ingredient.get('amount'))
-            current_ingredient, status = IngredientRecipe.objects.get_or_create(
+            IngredientRecipe.objects.get_or_create(
                 recipe=recipe,
                 ingredient=ingredient.get('id'),
                 amount=ingredient.get('amount'),
             )
-        # IngredientRecipe.objects.create(
-        #     # recipe=recipe, ingredient=current_ingredient, amount=amount
-        #     recipe=recipe, **current_ingredient
-        # )
         return recipe
 
+    def update(self, instance, validated_data):
+        tags = validated_data.pop('tags')
+        instance.tags.clear()
+        ingredients = validated_data.pop('ingredients')
+        instance.ingredients.clear()
+        instance.image = validated_data.get('image', instance.image)
+        instance.name = validated_data.get('name', instance.name)
+        instance.text = validated_data.get('text', instance.text)
+        instance.cooking_time = validated_data.get('cooking_time', instance.cooking_time)
+        instance.tags.set(tags)
+        instance.save
+        for ingredient in ingredients:
+            IngredientRecipe.objects.get_or_create(
+                recipe=instance,
+                ingredient=ingredient.get('id'),
+                amount=ingredient.get('amount'),
+            )
+        return instance
