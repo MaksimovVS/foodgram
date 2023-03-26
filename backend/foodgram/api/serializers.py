@@ -31,10 +31,6 @@ class IngredientAmountSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'measurement_unit', 'amount')
 
 
-class FavoriteSerializer(serializers.ModelSerializer):
-    pass
-
-
 class RecipeSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True, read_only=True)
     author = CustomUserSerializer(read_only=True)
@@ -58,3 +54,21 @@ class RecipeSerializer(serializers.ModelSerializer):
             return Favorite.objects.filter(recipe=obj, user=user,
                                            is_in_shopping_cart=True).exists()
         return False
+
+
+class ActionRecipeSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Recipe
+        fields = (
+            # 'ingredients',
+            # 'tags',
+            'image',
+            'name',
+            'text',
+            'cooking_time',
+            # 'author',
+        )
+        # read_only_fields = ('author',)
+
+
