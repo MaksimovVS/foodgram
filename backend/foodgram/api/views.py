@@ -93,7 +93,5 @@ class RecipeViewSet(ModelViewSet):
             for ingredient in ingredients:
                 f.write(f'{ingredient.get("ingredient__name")}: {ingredient.get("ingredient_total")} ({ingredient.get("ingredient__measurement_unit")})\n')
         file_path = os.path.join(os.getcwd(), filename)
-        response = FileResponse(open(file_path, 'rb'), as_attachment=True, filename=filename)
-        return response
-        # return Response(ingredients)
-        # return convert_txt(ingredients)
+        file_response = FileResponse(open(file_path, 'rb'), as_attachment=True, filename=filename)
+        return file_response

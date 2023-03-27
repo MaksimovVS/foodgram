@@ -1,9 +1,12 @@
 # api/serializers.py
-
+from django.contrib.auth import get_user_model
 from rest_framework import serializers
+from rest_framework.fields import SerializerMethodField
 
 from recipes.models import Ingredient, Recipe, Tag, IngredientRecipe, Favorite
 from users.serializers import CustomUserSerializer
+
+User = get_user_model()
 
 
 class AddTagSerializer(serializers.ModelSerializer):
@@ -136,3 +139,27 @@ class FavoriteRecipeSerializer(serializers.ModelSerializer):
      class Meta:
          model = Recipe
          fields = ('id', 'name', 'image', 'cooking_time',)
+
+
+class UserFollowingSerializer(CustomUserSerializer):
+    recipes = FavoriteRecipeSerializer(many=True, read_only=True)
+    recipes_count = SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = (
+            'email',
+            'id',
+            'username',
+            'first_name',
+            'last_name',
+            'is_subscribed',
+            'recipes',
+            'recipes_count',
+        )
+
+    def get_is_subscribed(self, obj):
+        return True
+
+    def get_is_recipes_count(self, obj):
+        return obj.recipes.count()

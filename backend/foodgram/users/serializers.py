@@ -3,6 +3,7 @@
 from django.contrib.auth import get_user_model
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from rest_framework import serializers
+from rest_framework.fields import SerializerMethodField
 
 from users.models import Follow
 
@@ -36,3 +37,6 @@ class CustomUserSerializer(UserSerializer):
         if request is None or request.user.is_anonymous:
             return False
         return Follow.objects.filter(author=obj, user=request.user).exists()
+
+
+
