@@ -121,7 +121,7 @@ class ActionRecipeSerializer(serializers.ModelSerializer):
         instance.text = validated_data.get('text', instance.text)
         instance.cooking_time = validated_data.get('cooking_time', instance.cooking_time)
         instance.tags.set(tags)
-        instance.save
+        instance.save()
         for ingredient in ingredients:
             IngredientRecipe.objects.get_or_create(
                 recipe=instance,
@@ -129,3 +129,10 @@ class ActionRecipeSerializer(serializers.ModelSerializer):
                 amount=ingredient.get('amount'),
             )
         return instance
+
+
+class FavoriteRecipeSerializer(serializers.ModelSerializer):
+
+     class Meta:
+         model = Recipe
+         fields = ('id', 'name', 'image', 'cooking_time',)

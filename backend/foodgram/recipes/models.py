@@ -38,8 +38,8 @@ class Ingredient(models.Model):
     class Meta:
         pass
 
-    # def __str__(self):
-    #     return self.name
+    def __str__(self):
+        return self.name
 
 
 class Recipe(models.Model):
@@ -67,8 +67,6 @@ class Recipe(models.Model):
         Ingredient,
         through='IngredientRecipe'
     )
-    # is_favorited = models.BooleanField(default=False)
-    # is_in_shopping_cart = models.BooleanField(default=False)
 
     class Meta:
         pass
@@ -95,7 +93,7 @@ class IngredientRecipe(models.Model):
 
 
 class Favorite(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='favorite')
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
     is_favorited = models.BooleanField()
     is_in_shopping_cart = models.BooleanField()
