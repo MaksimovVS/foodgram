@@ -45,7 +45,7 @@ class RecipeViewSet(ModelViewSet):
     #     ...
 
     @action(detail=True, methods=('post', 'delete'))
-    def favorite(self, request, pk=None):
+    def favorite(self, request, pk):
         user = request.user
         if request.method == 'DELETE':
             favorite = get_object_or_404(Favorite, user=user.id, recipe=pk, is_favorited=True)
