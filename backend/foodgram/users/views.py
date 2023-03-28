@@ -7,8 +7,11 @@ from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
+from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from api.paginations import CustomPagination
 from api.serializers import FollowSerializer
 from users.models import Follow
 from users.serializers import CustomCreateUserSerializer
@@ -19,6 +22,8 @@ User = get_user_model()
 
 class CustomUserViewSet(UserViewSet):
     serializer_class = CustomCreateUserSerializer
+    permission_classes = (IsAuthenticated,)
+    pagination_class = CustomPagination
 
     @action(detail=False, methods=('get',))
     def subscriptions(self, request):

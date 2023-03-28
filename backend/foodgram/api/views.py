@@ -1,15 +1,22 @@
 # api/views.py
+
 import os
 
 from django.db.models import Sum
 from django.http import FileResponse
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
+from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet, ModelViewSet
 
+from api.filters import IngredientFilter, TagFilter
+from api.paginations import CustomPagination
+from api.permissions import IsOwnerOrReadOnly
 from api.serializers import (
     IngredientSerializer,
     RecipeSerializer,
@@ -22,15 +29,22 @@ from recipes.models import Ingredient, Tag, Recipe, Favorite, IngredientRecipe
 class TagViewSet(ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
+    permission_classes = (AllowAny,)
 
 
 class IngredientViewSet(ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
+    permission_classes = (AllowAny,)
+    filterset_class = IngredientFilter
 
 
 class RecipeViewSet(ModelViewSet):
     queryset = Recipe.objects.all()
+    permission_classes = (IsOwnerOrReadOnly,)
+    pagination_class = CustomPagination
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = TagFilter
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
@@ -40,11 +54,7 @@ class RecipeViewSet(ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
-    #
-    # def perform_update(self, serializer):
-    #     ...
-
-    @action(detail=True, methods=('post', 'delete'))
+    @action(detail=True, methods=('post', 'delete'), permission_classes=(IsAuthenticated,))
     def favorite(self, request, pk):
         user = request.user
         if request.method == 'DELETE':
@@ -61,7 +71,7 @@ class RecipeViewSet(ModelViewSet):
         serializer = FavoriteRecipeSerializer(recipe)
         return Response(data=serializer.data, status=status.HTTP_201_CREATED)
 
-    @action(detail=True, methods=('post', 'delete'))
+    @action(detail=True, methods=('post', 'delete'), permission_classes=(IsAuthenticated,))
     def shopping_cart(self, request, pk=None):
         user = request.user
         if request.method == 'DELETE':
@@ -79,7 +89,7 @@ class RecipeViewSet(ModelViewSet):
         serializer = FavoriteRecipeSerializer(recipe)
         return Response(data=serializer.data, status=status.HTTP_201_CREATED)
 
-    @action(detail=False, methods=('get',))
+    @action(detail=False, methods=('get',), permission_classes=(IsAuthenticated,))
     def download_shopping_cart(self, request):
         ingredients = IngredientRecipe.objects.filter(
             recipe__favorite__user=request.user.id

@@ -94,6 +94,6 @@ class IngredientRecipe(models.Model):
 
 class Favorite(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='favorite')
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='users_favorites',)
     is_favorited = models.BooleanField()
     is_in_shopping_cart = models.BooleanField()
