@@ -129,8 +129,8 @@ class Favorite(models.Model):
         on_delete=models.CASCADE,
         related_name='users_favorites',
     )
-    is_favorited = models.BooleanField()
-    is_in_shopping_cart = models.BooleanField()
+    is_favorited = models.BooleanField(null=True)
+    is_in_shopping_cart = models.BooleanField(null=True)
 
     class Meta:
         constraints = (

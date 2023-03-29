@@ -11,15 +11,19 @@ from rest_framework.response import Response
 from api.paginations import CustomPagination
 from api.serializers import FollowSerializer, UserFollowingSerializer
 from users.models import Follow
-from users.serializers import CustomCreateUserSerializer
+from users.serializers import CustomCreateUserSerializer, CustomUserSerializer
 
 User = get_user_model()
 
 
 class CustomUserViewSet(UserViewSet):
-    serializer_class = CustomCreateUserSerializer
     permission_classes = (IsAuthenticated,)
     pagination_class = CustomPagination
+
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return CustomUserSerializer
+        return CustomCreateUserSerializer
 
     @action(detail=False, methods=('get',))
     def subscriptions(self, request):
@@ -28,7 +32,11 @@ class CustomUserViewSet(UserViewSet):
         pages = self.paginate_queryset(
             User.objects.filter(following__user=request.user)
         )
-        serializer = UserFollowingSerializer(pages, many=True)
+        serializer = UserFollowingSerializer(
+            pages,
+            many=True,
+            context={'request': request}
+        )
         return self.get_paginated_response(
             serializer.data)
 

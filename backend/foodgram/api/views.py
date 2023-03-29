@@ -65,7 +65,7 @@ class RecipeViewSet(ModelViewSet):
             favorite.save()
             return Response(status=status.HTTP_204_NO_CONTENT)
         recipe = get_object_or_404(Recipe, pk=pk)
-        favorite, _ = Favorite.objects.get_or_create(user=user.id, recipe=pk)
+        favorite, _ = Favorite.objects.get_or_create(user=user, recipe=recipe)
         if favorite.is_favorited:
             raise ValidationError(
                 'Нельзя повторно добавить рецепт в избранное.')
@@ -78,15 +78,16 @@ class RecipeViewSet(ModelViewSet):
             permission_classes=(IsAuthenticated,))
     def shopping_cart(self, request, pk=None):
         user = request.user
+        recipe = get_object_or_404(Recipe, pk=pk)
         if request.method == 'DELETE':
-            shopping_cart = get_object_or_404(Favorite, user=user.id,
-                                              recipe=pk,
+            shopping_cart = get_object_or_404(Favorite, user=user,
+                                              recipe=recipe,
                                               is_in_shopping_cart=True)
             shopping_cart.is_in_shopping_cart = False
             shopping_cart.save()
             return Response(status=status.HTTP_204_NO_CONTENT)
-        recipe = get_object_or_404(Recipe, pk=pk)
-        shopping_cart, _ = Favorite.objects.get_or_create(user=user.id,
+
+        shopping_cart, _ = Favorite.objects.get_or_create(user=user,
                                                           recipe=recipe)
         if shopping_cart.is_in_shopping_cart:
             raise ValidationError(
@@ -100,7 +101,7 @@ class RecipeViewSet(ModelViewSet):
             permission_classes=(IsAuthenticated,))
     def download_shopping_cart(self, request):
         ingredients = IngredientRecipe.objects.filter(
-            recipe__favorite__user=request.user.id
+            recipe__users_favorites__user=request.user.id
         ).values(
             'ingredient__name', 'ingredient__measurement_unit'
         ).order_by(

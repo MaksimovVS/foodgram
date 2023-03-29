@@ -179,7 +179,7 @@ class FollowSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         serializer = UserFollowingSerializer(
-            instance,
+            User.objects.get(id=instance.author.id),
             context={'request': self.context.get('request')}
         )
         return serializer.data
@@ -199,11 +199,11 @@ class FollowSerializer(serializers.ModelSerializer):
 
 
 class UserFollowingSerializer(CustomUserSerializer):
-    email = serializers.ReadOnlyField(source='author.email')
-    id = serializers.ReadOnlyField(source='author.id')
-    username = serializers.ReadOnlyField(source='author.username')
-    first_name = serializers.ReadOnlyField(source='author.first_name')
-    last_name = serializers.ReadOnlyField(source='author.last_name')
+    email = serializers.ReadOnlyField()
+    id = serializers.ReadOnlyField()
+    username = serializers.ReadOnlyField()
+    first_name = serializers.ReadOnlyField()
+    last_name = serializers.ReadOnlyField()
     is_subscribed = serializers.SerializerMethodField()
     recipes = serializers.SerializerMethodField()
     recipes_count = serializers.SerializerMethodField()
@@ -226,17 +226,17 @@ class UserFollowingSerializer(CustomUserSerializer):
 
     def get_recipes(self, obj):
         request = self.context.get('request')
-        recipe_limit = request.GET.get('recipe_limit')
-        if recipe_limit:
+        if request.GET.get('recipes_limit'):
+            recipe_limit = int(request.GET.get('recipes_limit'))
             queryset = Recipe.objects.filter(
-                author=obj.author)[:int(recipe_limit)]
+                author=obj.id)[:recipe_limit]
         else:
             queryset = Recipe.objects.filter(
-                author=obj.author)
+                author=obj.id)
         serializer = FavoriteRecipeSerializer(
             queryset, read_only=True, many=True
         )
         return serializer.data
 
     def get_recipes_count(self, obj):
-        return obj.author.recipes.count()
+        return obj.recipes.count()
