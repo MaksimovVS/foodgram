@@ -3,6 +3,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from rest_framework.exceptions import ValidationError
 
 
 class User(AbstractUser):
@@ -21,6 +22,10 @@ class User(AbstractUser):
         _('Фамилия'),
         max_length=150,
     )
+
+    class Meta:
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
 
     def is_follower_by(self, user):
         return Follow.objects.filter(user=user, author=self).exists()
@@ -48,6 +53,10 @@ class Follow(models.Model):
                 fields=('user', 'author'),
                 name='unique_follow',
             )]
+
+    def clean(self):
+        if self.user == self.author:
+            raise ValidationError('Нельзя подписаться на самого себя')
 
     def __str__(self):
         return f'{self.user} подписан на {self.author}'
