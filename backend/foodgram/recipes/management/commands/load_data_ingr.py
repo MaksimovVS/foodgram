@@ -16,7 +16,6 @@ class Command(BaseCommand):
         )
         file = os.path.join(path_to_data, 'ingredients.csv')
         print('Start import data')
-        # file = f'{path_to_data}/ingredients.csv'
         try:
             with open(file, encoding='utf-8') as f:
                 for ingredient in reader(f):
