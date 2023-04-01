@@ -4,6 +4,8 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from recipes.validators import validate_nonzero
+
 User = get_user_model()
 
 
@@ -29,7 +31,7 @@ class Tag(models.Model):
 
 class Ingredient(models.Model):
     name = models.CharField(
-        _('Название ингридиента'),
+        _('Название ингредиента'),
         max_length=200,
     )
     measurement_unit = models.CharField(
@@ -64,7 +66,7 @@ class Recipe(models.Model):
     text = models.TextField(
         _('Описание рецепта'),
     )
-    cooking_time = models.PositiveIntegerField()
+    cooking_time = models.PositiveIntegerField(validators=(validate_nonzero,))
     tags = models.ManyToManyField(Tag, through='TagRecipe')
     ingredients = models.ManyToManyField(
         Ingredient,
@@ -103,7 +105,7 @@ class IngredientRecipe(models.Model):
         on_delete=models.CASCADE,
         related_name='ingredient_in_recipe',
     )
-    amount = models.PositiveSmallIntegerField('Количество')
+    amount = models.PositiveIntegerField(validators=(validate_nonzero,))
 
     class Meta:
         constraints = (
