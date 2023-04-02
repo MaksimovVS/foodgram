@@ -10,10 +10,10 @@ services:
       - ./.env
 
   backend:
-    # image: maksimovvs/yamdb_final:v0 # remove image
+    image: maksimovvs/infra-backend # remove image
       # Можно ли спрятать логин ДокерХаб?
     container_name: back
-    build: ../backend/foodgram # local image
+#    build: ../backend/foodgram # local image
     restart: always
     volumes:
       - static_value:/app/static/
@@ -26,10 +26,11 @@ services:
       - ./.env
 
   frontend:
+    image: maksimovvs/infra-frontend
     container_name: front
-    build:
-      context: ../frontend
-      dockerfile: Dockerfile
+#    build:
+#      context: ../frontend
+#      dockerfile: Dockerfile
     volumes:
       - ../frontend/:/app/result_build/
 
