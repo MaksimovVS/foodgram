@@ -12,8 +12,7 @@ from foodgram import settings
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         path_to_data = os.path.join(
-            settings.BASE_DIR.resolve().parent, "data"  # remove
-            # settings.BASE_DIR.resolve().parent.parent, "data"  # locale
+            settings.BASE_DIR.resolve().parent.parent, "data"
         )
         file = os.path.join(path_to_data, "ingredients.csv")
         print("Start import data")
