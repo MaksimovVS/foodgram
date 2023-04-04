@@ -42,6 +42,6 @@ class TagFilter(FilterSet):
         if self.request.user.is_authenticated and value is True:
             return queryset.filter(
                 users_favorites__user=self.request.user,
-                is_in_shopping_cart__favorite__user=True,
+                is_in_shopping_cart__users_favorites__user=True,
             )
         return queryset
