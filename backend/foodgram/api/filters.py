@@ -34,7 +34,8 @@ class TagFilter(FilterSet):
     def get_is_favorited(self, queryset, name, value):
         if self.request.user.is_authenticated and value is True:
             return queryset.filter(
-                users_favorites__user=self.request.user, is_favorited=True
+                users_favorites__user=self.request.user,
+                users_favorites__is_favorited=True,
             )
         return queryset
 
@@ -42,6 +43,6 @@ class TagFilter(FilterSet):
         if self.request.user.is_authenticated and value is True:
             return queryset.filter(
                 users_favorites__user=self.request.user,
-                is_in_shopping_cart__users_favorites__user=True,
+                users_favorites__is_in_shopping_cart=True,
             )
         return queryset
