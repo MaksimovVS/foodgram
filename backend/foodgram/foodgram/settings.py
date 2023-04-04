@@ -18,8 +18,8 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = int(os.getenv("DEBUG", default=0))
 
-ALLOWED_HOSTS = (os.getenv("ALLOWED_HOST"),)
-# ALLOWED_HOSTS = '51.250.98.43'
+# ALLOWED_HOSTS = (os.getenv("ALLOWED_HOST"),)
+ALLOWED_HOSTS = ('51.250.98.43',)
 
 INSTALLED_APPS = [
     "django.contrib.admin",
