@@ -118,13 +118,6 @@ class IngredientRecipe(models.Model):
         ),
     ))
 
-    # validators = (
-    #     MinValueValidator(
-    #         Limits.MIN_AMOUNT_INGREDIENTS,
-    #         'Нужно хоть какое-то количество.',
-    #     ),
-
-
     class Meta:
         constraints = (
             models.UniqueConstraint(
