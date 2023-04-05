@@ -1,15 +1,16 @@
 # users/views.py
-from djoser import serializers
 
 from api.paginations import CustomPagination
 from api.serializers import FollowSerializer, UserFollowingSerializer
 from django.contrib.auth import get_user_model
+from djoser import serializers
 from djoser.views import UserViewSet
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+
 from users.models import Follow
 from users.serializers import CustomCreateUserSerializer, CustomUserSerializer
 
