@@ -1,9 +1,11 @@
 # recipes/models.py
 
 from django.contrib.auth import get_user_model
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from recipes.validators import validate_nonzero
+
+MIN_VALUE_IN_FIELD = 1
 
 User = get_user_model()
 
@@ -65,7 +67,12 @@ class Recipe(models.Model):
     text = models.TextField(
         _("Описание рецепта"),
     )
-    cooking_time = models.PositiveIntegerField(validators=(validate_nonzero,))
+    cooking_time = models.PositiveIntegerField(validators=(
+        MinValueValidator(
+            MIN_VALUE_IN_FIELD,
+            message='Количество должно быть не меньше 1'
+        ),
+    ))
     tags = models.ManyToManyField(Tag, through="TagRecipe")
     ingredients = models.ManyToManyField(
         Ingredient,
@@ -104,7 +111,19 @@ class IngredientRecipe(models.Model):
         on_delete=models.CASCADE,
         related_name="ingredient_in_recipe",
     )
-    amount = models.PositiveIntegerField(validators=(validate_nonzero,))
+    amount = models.PositiveIntegerField(validators=(
+        MinValueValidator(
+            MIN_VALUE_IN_FIELD,
+            message='Количество должно быть не меньше 1'
+        ),
+    ))
+
+    # validators = (
+    #     MinValueValidator(
+    #         Limits.MIN_AMOUNT_INGREDIENTS,
+    #         'Нужно хоть какое-то количество.',
+    #     ),
+
 
     class Meta:
         constraints = (

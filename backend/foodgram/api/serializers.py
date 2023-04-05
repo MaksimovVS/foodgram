@@ -179,6 +179,11 @@ class ActionRecipeSerializer(
         ingredients = data.get("ingredients")
         if not ingredients:
             raise serializers.ValidationError("Добавьте ингредиенты.")
+        for ingredient in ingredients:
+            if ingredient.get("amount") <= 0:
+                raise serializers.ValidationError(
+                    "Количество ингредиентов должно быть больше 0."
+                )
         return data
 
 

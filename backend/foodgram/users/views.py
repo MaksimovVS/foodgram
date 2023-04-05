@@ -1,4 +1,5 @@
 # users/views.py
+from djoser import serializers
 
 from api.paginations import CustomPagination
 from api.serializers import FollowSerializer, UserFollowingSerializer
@@ -20,6 +21,8 @@ class CustomUserViewSet(UserViewSet):
     pagination_class = CustomPagination
 
     def get_serializer_class(self):
+        if self.action == "set_password":
+            return serializers.PasswordSerializer
         if self.request.method == "GET":
             return CustomUserSerializer
         return CustomCreateUserSerializer
