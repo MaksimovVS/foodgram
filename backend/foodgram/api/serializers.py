@@ -24,7 +24,7 @@ class TagSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class AddIngredientSerializer(serializers.ModelSerializer):
+class AddIngredientSerializer(serializers.ModelSerializer):  # id
     id = serializers.PrimaryKeyRelatedField(
         queryset=Ingredient.objects.all(),
     )

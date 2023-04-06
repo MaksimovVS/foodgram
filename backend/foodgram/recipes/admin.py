@@ -25,9 +25,14 @@ class IngredientRecipeAdmin(admin.ModelAdmin):
     search_fields = ("recipe__name",)
 
 
+class IngredientRecipeInline(admin.TabularInline):
+    model = IngredientRecipe
+
+
 class RecipeAdmin(admin.ModelAdmin):
     list_display = ("pk", "name", "author")
     search_fields = ("name", "author__username", "author__email")
+    inlines = (IngredientRecipeInline,)
 
 
 class FavoriteAdmin(admin.ModelAdmin):
