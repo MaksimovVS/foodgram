@@ -1,4 +1,4 @@
-# praktikum_new_diplom
+# Foodgram
 
 ![example workflow](https://github.com/MaksimovVS/foodgram-project-react/actions/workflows/main.yml/badge.svg)
 [Ссылка на сайт](http://51.250.98.43/)
